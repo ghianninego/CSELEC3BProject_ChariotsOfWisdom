@@ -2,8 +2,8 @@
 
 Chariots of Wisdom project for the subject CS-ELEC3B.
 
-4CSC
-Daniela P. Bautista
-Ghiannine Shiarra J. Go
-Isabela Marie C. Rosalado
-Val Gabriel V. Vinuya
+4CSC<br>
+  Daniela P. Bautista<br>
+  Ghiannine Shiarra J. Go<br>
+  Isabela Marie C. Rosalado<br>
+  Val Gabriel V. Vinuya
