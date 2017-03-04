@@ -9,6 +9,7 @@ public class GameManagerScript : MonoBehaviour {
 	public GameObject pieceClicked = null;
 	public GameObject[] spaces;
 	public LayerMask layerMask;
+	public Camera[] cameras;
 
 	private Grid grid ;
 
@@ -22,6 +23,13 @@ public class GameManagerScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (isBlackPlayer) {
+			cameras [0].gameObject.SetActive (false);
+			cameras [1].gameObject.SetActive (true);
+		} else {
+			cameras [0].gameObject.SetActive (true);
+			cameras [1].gameObject.SetActive (false);
+		}
 		if (Input.GetMouseButtonDown (0)) {
 			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 			RaycastHit hit;
@@ -36,15 +44,17 @@ public class GameManagerScript : MonoBehaviour {
 						if (isBlackPlayer && hit.transform.gameObject.GetComponent<Piece> ().isBlack) {
 							grid.disableHighlights ();
 							pieceClicked = hit.transform.gameObject;
-							highlightPlaceableCells ();
+							if (!highlightPlaceableCells ())
+								pieceClicked = null;
 
 
 						} //if white player clicked white piece 
 						else if (!isBlackPlayer && !hit.transform.gameObject.GetComponent<Piece> ().isBlack) {
 							grid.disableHighlights ();
 							pieceClicked = hit.transform.gameObject;
-							highlightPlaceableCells ();
-							//Debug.Log (pieceClicked.name);
+							if (!highlightPlaceableCells ())
+								pieceClicked = null;
+							
 						}
 
 					} else {
@@ -110,18 +120,20 @@ public class GameManagerScript : MonoBehaviour {
 	}
 
 	//highlight all clickable cells of clicked piece
-	void highlightPlaceableCells(){
+	bool highlightPlaceableCells(){
+		bool isMoveable = false;
 		if (pieceClicked != null) {
 			GameObject cell = getBoardSquare (pieceClicked);
 			if (cell != null) {
 				int row = getIndexOfCell (cell) / grid.gridSize;
 				int col = getIndexOfCell (cell) % grid.gridSize;
-				grid.setCanPlay (pieceClicked.gameObject.tag, row, col);
+				isMoveable = grid.setCanPlay (pieceClicked.gameObject.tag, row, col);
 			} else {
 				pieceClicked = null;
 			}
 
 		}
+		return isMoveable;
 	}
 
 	//enable/disable highlight of grid[i,j]

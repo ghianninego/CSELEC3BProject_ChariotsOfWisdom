@@ -41,19 +41,21 @@ public class Grid {
 		grid [6, 4] = "wCross";
 	}
 		
-	public void setCanPlay(string pieceType, int row, int col){
+	public bool setCanPlay(string pieceType, int row, int col){
 		if (pieceType == "Square") {
-			setCanPlaySquare (row, col);
+			return setCanPlaySquare (row, col);
 		} else if (pieceType == "Triangle") {
-			setCanPlayTriangle (row, col);
+			return setCanPlayTriangle (row, col);
 		} else if (pieceType == "Circle") {
-			setCanPlayCircle (row, col);
+			return setCanPlayCircle (row, col);
 		} else if (pieceType == "Cross") {
-			setCanPlayCross (row, col);
+			return setCanPlayCross (row, col);
 		} else if (pieceType == "Octagon") {
-			setCanPlaySquare (row, col);
-			setCanPlayTriangle (row, col);
-		}
+			bool temp = setCanPlaySquare (row, col);
+			bool temp2 = setCanPlayTriangle (row, col);
+			return temp || temp2;
+		} else
+			return false;
 	}
 	bool sameColor(int row, int col){
 		bool isBlack = (grid[row,col][0] == 'b')?true:false;
@@ -65,13 +67,15 @@ public class Grid {
 		else
 			return false;
 	}
-	void setCanPlaySquare(int row, int col){
+	bool setCanPlaySquare(int row, int col){
+		bool isMoveable = false;
 		for (int i = row + 1; i < gridSize; i++) {
 			if (sameColor(i,col)) {
 				break;
 			}
 			canPlace [i, col] = true;
 			GameManagerScript.Instance.highlight (i, col,true);
+			isMoveable = true;
 			if (grid [i, col] != "empty") {
 				break;
 			}
@@ -82,6 +86,7 @@ public class Grid {
 			}
 			canPlace [i, col] = true;
 			GameManagerScript.Instance.highlight (i, col,true);
+			isMoveable = true;
 			if (grid [i, col] != "empty") {
 				break;
 			}
@@ -93,6 +98,7 @@ public class Grid {
 			}
 			canPlace [row, i] = true;
 			GameManagerScript.Instance.highlight (row,i,true);
+			isMoveable = true;
 			if (grid [row, i] != "empty") {
 				break;
 			}
@@ -103,13 +109,17 @@ public class Grid {
 			}
 			canPlace [row, i] = true;
 			GameManagerScript.Instance.highlight (row,i,true);
+			isMoveable = true;
 			if (grid [row, i] != "empty") {
 				break;
 			}
 		}
+
+		return isMoveable;
 	}
 
-	void setCanPlayTriangle(int row, int col){
+	bool setCanPlayTriangle(int row, int col){
+		bool isMoveable = false;
 		//upright
 		int colDist = 1;
 		for(int i = row-1; i>-1; i--){
@@ -118,6 +128,7 @@ public class Grid {
 				if (!sameColor (i, col + colDist)) {
 					canPlace [i, col + colDist] = true;
 					GameManagerScript.Instance.highlight (i, col + colDist, true);
+					isMoveable = true;
 				} else
 					break;
 
@@ -132,6 +143,7 @@ public class Grid {
 				if (!sameColor (i, col - colDist)) {
 					canPlace [i, col - colDist] = true;
 					GameManagerScript.Instance.highlight (i, col - colDist, true);
+					isMoveable = true;
 				} else
 					break;
 			}
@@ -145,6 +157,7 @@ public class Grid {
 				if (!sameColor (i, col + colDist)) {
 					canPlace [i, col + colDist] = true;
 					GameManagerScript.Instance.highlight (i, col + colDist, true);
+					isMoveable = true;
 				} else
 					break;
 			}
@@ -157,85 +170,114 @@ public class Grid {
 				if (!sameColor (i, col - colDist)) {
 					canPlace [i, col - colDist] = true;
 					GameManagerScript.Instance.highlight (i, col - colDist, true);
+					isMoveable = true;
 				}else
 					break;
 			}
 			colDist++;
 		}
+		return isMoveable;
 	}
 
-	void setCanPlayCircle(int row, int col){
-		
+	bool setCanPlayCircle(int row, int col){
+		bool isMoveable = false;
 		bool isBlack = GameManagerScript.Instance.pieceClicked.GetComponent<Piece> ().isBlack;
 
 		//if black move downwards
 		if (isBlack) {
-			if(!sameColor(row + 1, col)){
-				canPlace [row + 1, col] = true;
-				GameManagerScript.Instance.highlight (row + 1, col,true);
+			if (row + 1 < gridSize && row + 1 >= 0) {
+				if(!sameColor(row + 1, col)){		
+					canPlace [row + 1, col] = true;
+					GameManagerScript.Instance.highlight (row + 1, col,true);
+					isMoveable = true;
+				}
+
 			}
-			if (!sameColor (row + 1, col - 1)) {
-				canPlace [row + 1, col - 1] = true;
-				GameManagerScript.Instance.highlight (row + 1, col - 1, true);
+			if (row + 1 < gridSize && row + 1 >= 0 &&  col - 1 < gridSize &&  col - 1 >=0) {
+				if (!sameColor (row + 1, col - 1)) {			
+					canPlace [row + 1, col - 1] = true;
+					GameManagerScript.Instance.highlight (row + 1, col - 1, true);
+					isMoveable = true;
+				}
 			}
-			if (!sameColor (row + 1, col + 1)) {
-				canPlace [row + 1, col + 1] = true;
-				GameManagerScript.Instance.highlight (row + 1, col + 1, true);
+			if (row + 1 < gridSize && row + 1 >= 0 && col + 1 < gridSize && col + 1 >= 0) {
+				if (!sameColor (row + 1, col + 1)) {
+					canPlace [row + 1, col + 1] = true;
+					GameManagerScript.Instance.highlight (row + 1, col + 1, true);
+					isMoveable = true;
+				}
 			}
 		} else {
-			if (!sameColor (row - 1, col)) {
-				canPlace [row - 1, col] = true;
-				GameManagerScript.Instance.highlight (row - 1, col, true);
+			if (row - 1 < gridSize && row - 1 >= 0) {
+				if (!sameColor (row - 1, col)) {
+					canPlace [row - 1, col] = true;
+					GameManagerScript.Instance.highlight (row - 1, col, true);
+					isMoveable = true;
+				}
 			}
-			if (!sameColor (row - 1, col - 1)) {
-				canPlace [row - 1, col - 1] = true;
-				GameManagerScript.Instance.highlight (row - 1, col - 1, true);
+			if (row - 1 < gridSize && row - 1 >= 0 && col - 1 < gridSize && col - 1 >= 0) {
+				if (!sameColor (row - 1, col - 1)) {
+					canPlace [row - 1, col - 1] = true;
+					GameManagerScript.Instance.highlight (row - 1, col - 1, true);
+					isMoveable = true;
+				}
 			}
-			if (!sameColor (row - 1, col + 1)) {
-				canPlace [row - 1, col + 1] = true;
-				GameManagerScript.Instance.highlight (row - 1, col + 1, true);
+			if (row - 1 < gridSize && row - 1 >= 0 && col + 1 < gridSize && col + 1 >= 0) {
+				if (!sameColor (row - 1, col + 1)) {
+					canPlace [row - 1, col + 1] = true;
+					GameManagerScript.Instance.highlight (row - 1, col + 1, true);
+					isMoveable = true;
+				}
 			}
 		}
-
+		return isMoveable;
 	}
 
-	void setCanPlayCross(int row, int col){
-
-		if(!sameColor(row + 1, col)){
+	bool setCanPlayCross(int row, int col){
+		bool isMoveable = false;
+		if(row + 1 < gridSize && row + 1 >= 0 && !sameColor(row + 1, col)){
 			canPlace [row + 1, col] = true;
 			GameManagerScript.Instance.highlight (row + 1, col,true);
+			isMoveable = true;
 		}
-		if (!sameColor (row + 1, col - 1)) {
+		if (row + 1 < gridSize && row + 1 >= 0 &&  col - 1 < gridSize &&  col - 1 >=0 && !sameColor (row + 1, col - 1)) {
 			canPlace [row + 1, col - 1] = true;
 			GameManagerScript.Instance.highlight (row + 1, col - 1, true);
+			isMoveable = true;
 		}
-		if (!sameColor (row + 1, col + 1)) {
+		if (row + 1 < gridSize && row + 1 >= 0 && col + 1 < gridSize && col + 1 >= 0 && !sameColor (row + 1, col + 1)) {
 			canPlace [row + 1, col + 1] = true;
 			GameManagerScript.Instance.highlight (row + 1, col + 1, true);
+			isMoveable = true;
 		}
-		if (!sameColor (row - 1, col)) {
+		if (row - 1 < gridSize && row - 1 >= 0 && !sameColor (row - 1, col)) {
 			canPlace [row - 1, col] = true;
 			GameManagerScript.Instance.highlight (row - 1, col, true);
+			isMoveable = true;
 		}
-		if (!sameColor (row - 1, col - 1)) {
+		if (row - 1 < gridSize && row - 1 >= 0 && col - 1 < gridSize && col - 1 >= 0 && !sameColor (row - 1, col - 1)) {
 			canPlace [row - 1, col - 1] = true;
 			GameManagerScript.Instance.highlight (row - 1, col - 1, true);
+			isMoveable = true;
 		}
-		if (!sameColor (row - 1, col + 1)) {
+		if (row - 1 < gridSize && row - 1 >= 0 && col + 1 < gridSize && col + 1 >= 0 && !sameColor (row - 1, col + 1)) {
 			canPlace [row - 1, col + 1] = true;
 			GameManagerScript.Instance.highlight (row - 1, col + 1, true);
+			isMoveable = true;
 		}
-		if (!sameColor (row, col - 1)) {
+		if (col - 1 < gridSize && col - 1 >= 0 && !sameColor (row, col - 1)) {
 			canPlace [row, col-1] = true;
 			GameManagerScript.Instance.highlight (row, col-1,true);
+			isMoveable = true;
 		}
-		if (!sameColor (row, col + 1)) {
+		if (col + 1 < gridSize && col + 1 >= 0 && !sameColor (row, col + 1)) {
 			canPlace [row, col+1] = true;
 			GameManagerScript.Instance.highlight (row, col+1,true);
+			isMoveable = true;
 		}
 			
 			
-
+		return isMoveable;
 
 	}
 
