@@ -40,7 +40,9 @@ public class Grid {
 		grid [6, 3] = "wOctagon";
 		grid [6, 4] = "wCross";
 	}
-		
+	public string getChessPiece(int row, int col){
+		return grid [row, col];
+	}
 	public bool setCanPlay(string pieceType, int row, int col){
 		if (pieceType == "Square") {
 			return setCanPlaySquare (row, col);
@@ -57,7 +59,8 @@ public class Grid {
 		} else
 			return false;
 	}
-	bool sameColor(int row, int col){
+	//if player's piece
+	public bool sameColor(int row, int col){
 		bool isBlack = (grid[row,col][0] == 'b')?true:false;
 		bool isWhite = (grid[row,col][0] == 'w')?true:false;
 
