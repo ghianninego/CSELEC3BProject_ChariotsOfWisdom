@@ -1,21 +1,21 @@
 fileFormatVersion: 2
-guid: c142980a5fb6e034eb117c662d985c32
-timeCreated: 1486662925
+guid: 4752565aed451d14eb5368e2a1e1e513
+timeCreated: 1490964510
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: Camera
-    100002: Circle
-    100004: Lamp
+    100002: Lamp
+    100004: Triangle
     100006: //RootNode
     400000: Camera
-    400002: Circle
-    400004: Lamp
+    400002: Lamp
+    400004: Triangle
     400006: //RootNode
-    2300000: Circle
-    3300000: Circle
-    4300000: Circle
+    2300000: Triangle
+    3300000: Triangle
+    4300000: Triangle
   materials:
     importMaterials: 1
     materialName: 0
