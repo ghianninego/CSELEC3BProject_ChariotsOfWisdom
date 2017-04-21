@@ -12,8 +12,14 @@ public class GameManagerScript : MonoBehaviour {
 	public GameObject[] spaces;
 	public LayerMask layerMask;
 	public Camera[] cameras;
+	public Camera topCam;
 	public Text winnerLabel;
 	public GameObject panel;
+
+	public Text blackScore;
+	public Text whiteScore;
+	public Text playAgainText;
+	public Text gameovertext;
 
 	private Grid grid ;
 	private bool isPaused = false;
@@ -26,15 +32,26 @@ public class GameManagerScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (isBlackPlayer) {
-			cameras [0].gameObject.SetActive (false);
-			cameras [1].gameObject.SetActive (true);
+		blackScore.text = Settings.blackPoints+"";
+		whiteScore.text = Settings.whitePoints+"";
+		if (Settings.camSetting == 0) {
+			topCam.gameObject.SetActive (false);
+			if (isBlackPlayer) {
+				cameras [0].gameObject.SetActive (false);
+				cameras [1].gameObject.SetActive (true);
+			} else {
+				cameras [0].gameObject.SetActive (true);
+				cameras [1].gameObject.SetActive (false);
+			}
 		} else {
-			cameras [0].gameObject.SetActive (true);
+			topCam.gameObject.SetActive (true);
+			cameras [0].gameObject.SetActive (false);
 			cameras [1].gameObject.SetActive (false);
 		}
+
 		if (Input.GetMouseButtonDown (0) && !isPaused) {
 			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+
 			RaycastHit hit;
 
 			if(Physics.Raycast(ray,out hit, 100)){
@@ -188,16 +205,35 @@ public class GameManagerScript : MonoBehaviour {
 		isPaused = true;
 		if (isBlackPlayer) {
 			winnerLabel.text = "Black player wins!";
+			Settings.blackPoints++;
 		} else {
 			winnerLabel.text = "White player wins!";
+			Settings.whitePoints++;
 		}
+		if (Settings.blackPoints < Settings.numOfGames && Settings.whitePoints < Settings.numOfGames) {
+			gameovertext.text = "Round Over";
+			playAgainText.text = "Next Round";
 
+		} else {
+			gameovertext.text = "GAME OVER";
+			if (Settings.blackPoints == Settings.numOfGames) {
+				winnerLabel.text = "Black player wins!";
+
+			}
+			else {
+				winnerLabel.text = "White player wins!";
+			}
+			playAgainText.text = "Play Again";
+		}
 		panel.GetComponent<CanvasRenderer> ().SetAlpha (200);
 		panel.SetActive (true);
 	}
 
 	public void reloadScene(){
-		
+		if (Settings.blackPoints >= Settings.numOfGames || Settings.whitePoints >= Settings.numOfGames) {
+			Settings.blackPoints = 0;
+			Settings.whitePoints = 0;
+		}
 		SceneManager.LoadScene ("GameScene");
 	}
 		
